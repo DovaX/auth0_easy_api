@@ -10,8 +10,8 @@ from flask import Flask, request, render_template
 
 
 ##### CLIENT SIDE #####
-def open_authentication_page(domain, client_id, audience):
-    url="https://"+domain+"/authorize?response_type=code&prompt=login&audience="+audience+"&client_id="+client_id+"&redirect_uri=http://localhost:5000/api/auth/callback" #https://dev.forloop.ai/api/auth/callback
+def open_authentication_page(domain, client_id, audience, host="0.0.0.0", port=4018):
+    url="https://"+domain+"/authorize?response_type=code&prompt=login&audience="+audience+"&client_id="+client_id+"&redirect_uri=http://"+host+":"+str(port)+"/api/auth/callback" #https://dev.forloop.ai/api/auth/callback
 
 
 
@@ -62,7 +62,7 @@ def get_management_token(domain, client_id, client_secret, audience):
     
 
 
-def generate_flask_callback_app(domain, client_id, client_secret, audience, store_user_function=None, logged_in_html_template="logged.html"):
+def generate_flask_callback_app(domain, client_id, client_secret, audience, host="0.0.0.0", port=4018, store_user_function=None, logged_in_html_template="logged.html"):
     app = Flask(__name__)
     
     @app.route('/api/auth/callback')
@@ -78,7 +78,7 @@ def generate_flask_callback_app(domain, client_id, client_secret, audience, stor
              "client_id": client_id,
              "client_secret": client_secret,
              "code": authorization_code,
-             "redirect_uri": 'http://localhost:5000/api/auth/callback',
+             "redirect_uri": 'http://'+host+':'+str(port)+'/api/auth/callback',
              "audience":audience,
              "scope":"openid profile email offline_access"})
         print(response.content)  
@@ -122,4 +122,4 @@ def generate_flask_callback_app(domain, client_id, client_secret, audience, stor
 
 #if __name__ == '__main__':
 #    app=generate_flask_callback_app(domain, client_id, client_secret, audience)
-#    app.run(debug=True)
+    app.run(host=host,port=port,debug=True)

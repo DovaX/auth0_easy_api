@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     
 setuptools.setup(
     name='auth0_easy_api',
-    version='1.0.3',
+    version='1.0.5',
     author='DovaX',
     author_email='dovax.ai@gmail.com',
     description='A Python wrapper around Auth0 Authentication API and Management API to make setup and basic operations easier',
