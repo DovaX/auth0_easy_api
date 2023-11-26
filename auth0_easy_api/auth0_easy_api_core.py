@@ -69,7 +69,7 @@ def generate_flask_callback_app(domain, client_id, client_secret, audience, host
     def callback():
         # Extract the fragment from the URL
         url = request.url#.split('#')[1]
-        print(url)
+        #print(url)
     
         authorization_code=url.split("code=")[1]
         
@@ -81,25 +81,26 @@ def generate_flask_callback_app(domain, client_id, client_secret, audience, host
              "redirect_uri": 'http://'+host+':'+str(port)+'/api/auth/callback',
              "audience":audience,
              "scope":"openid profile email offline_access"})
-        print(response.content)  
+        #print(response.content)  
         
         result=json.loads(response.content)
-        print(result)
+        #print(result)
         token=result["access_token"]
-        print(token)
+        #print(token)
         
         decoded_result=jwt.decode(token ,algorithms=["RS256"], options={"verify_signature": False})
     
-        print(decoded_result)
+        #print(decoded_result)
         sub=decoded_result.get("sub")
-        print(sub)
+        #print(sub)
         management_token=get_management_token(domain, client_id, client_secret, audience)
-        print(management_token)
+        #print(management_token)
         all_users=get_all_users(management_token)
-        print(all_users)
+        #print(all_users)
         user_index=[x["user_id"] for x in all_users].index(sub)
-        print(all_users[user_index])
+        #print(all_users[user_index])
         user=all_users[user_index]
+        print("Logged in user",user)
         if store_user_function is not None:
             try:
                 store_user_function(user)
@@ -110,8 +111,10 @@ def generate_flask_callback_app(domain, client_id, client_secret, audience, host
             
         
         
-     
-        return render_template(logged_in_html_template)
+        if logged_in_html_template is None:
+            return "Thanks for logging in! You can close browser now."
+        else: 
+            return render_template(logged_in_html_template)
     
     
     
